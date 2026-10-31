@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Códigos QR · GESCOM</title>
+<meta name="description" content="Códigos QR de los diagramas de GESCOM.">
+<meta name="theme-color" content="#006699">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="titles">
+    <div class="kicker">Uso interno del equipo</div>
+    <h1>Códigos QR de los diagramas</h1>
+  </div>
+  <a class="back" href="./"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span class="txt">Diagramas</span></a>
+</header>
+<main class="index-main">
+  <p class="intro">Cada código apunta a la página de su diagrama en esta misma dirección. Descárgalos aquí, ya con el sitio publicado, y pégalos en los recuadros QR de los anexos.</p>
+  <div class="qr-grid" id="qrs"></div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function () {
+  var items = [{"id": "contexto", "titulo": "Anexo C · Diagrama de contexto"}, {"id": "contenedores", "titulo": "Anexo C · Diagrama de contenedores"}, {"id": "modulos", "titulo": "Anexo C · Módulos de la API"}, {"id": "er", "titulo": "Anexo D · Modelo ER sin atributos"}, {"id": "er-atributos", "titulo": "Anexo D · Modelo ER con atributos"}, {"id": "relacional", "titulo": "Anexo D · Esquema relacional"}];
+  var base = location.href.replace(/[?#].*$/, "").replace(/qr\.html$/, "");
+  var cont = document.getElementById("qrs");
+  if (typeof QRCode === "undefined") {
+    cont.innerHTML = '<p class="intro">No se pudo cargar el generador de códigos QR. Revisa tu conexión a internet y recarga la página.</p>';
+    return;
+  }
+  items.forEach(function (it) {
+    var url = base + it.id + "/";
+    var card = document.createElement("div");
+    card.className = "qr-card";
+    card.innerHTML = '<div class="qr"></div><strong></strong><code></code><button type="button">Descargar PNG</button>';
+    card.querySelector("strong").textContent = it.titulo;
+    card.querySelector("code").textContent = url;
+    cont.appendChild(card);
+    new QRCode(card.querySelector(".qr"), { text: url, width: 1024, height: 1024, correctLevel: QRCode.CorrectLevel.M });
+    card.querySelector("button").addEventListener("click", function () {
+      var c = card.querySelector("canvas");
+      var a = document.createElement("a");
+      a.href = c.toDataURL("image/png");
+      a.download = "qr-" + it.id + ".png";
+      a.click();
+    });
+  });
+})();
+</script>
+</body>
+</html>
